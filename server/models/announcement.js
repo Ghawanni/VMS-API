@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var AnnoucementSchema = new mongoose.model({ 
+var AnnoucementSchema = new mongoose.Schema({ 
   text: { type: String, required: true, default:'Attention.'}
 });
 

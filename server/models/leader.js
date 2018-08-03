@@ -5,13 +5,13 @@ const _ = require('lodash');
 const bcrypt = require('bcryptjs');
 
 // set up the schema
-var VolunteerSchema = new mongoose.Schema({
+var LeaderSchema = new mongoose.Schema({
   fName: { type: String, required: true, trim: true, minLength: 1, },
   lName: { type: String, trim: true, required: true, minlength: 1, },
-  leader: { type: Boolean, required: true, default: false, },
+  leader: { type: Boolean, required: true, default: true, },
   password: { type: String, required: true, minLength: 6 },
   skills: { type: String, required: true },
-  phone: { type: Number, required: true, minlength: 10, unique: true },
+  phone: { type: Number, required: true, minlength: 10 },
   nationalId: { type: Number, minlength: 10, required: true },
   email: {
     type: String, required: true, trim: true, minLength: 1, unique: true,
@@ -30,11 +30,11 @@ var VolunteerSchema = new mongoose.Schema({
 });
 
 
-VolunteerSchema.methods.toJSON = function () {
-  var volunteer = this;
-  var volunteerObject = volunteer.toObject();
+LeaderSchema.methods.toJSON = function () {
+  var leader = this;
+  var leaderObject = leader.toObject();
 
-  return _.pick(volunteerObject, ['_id', 'nationalId', 'fName', 'lName', 'lat', 'lng']);
+  return _.pick(leaderObject, ['_id', 'nationalId', 'fName', 'lName']);
 };
 
 
@@ -44,13 +44,13 @@ VolunteerSchema.methods.toJSON = function () {
 
 // adding a middleware that will run before executing save() using this model
 // the middleware will hash passwords
-VolunteerSchema.pre('save', function (next) {
-  var volunteer = this;
+LeaderSchema.pre('save', function (next) {
+  var leader = this;
 
-  if (volunteer.isModified('password')) {
+  if (leader.isModified('password')) {
     bcrypt.genSalt(10, (error, salt) => {
-      bcrypt.hash(volunteer.password, salt, (err, hash) => {
-        volunteer.password = hash;
+      bcrypt.hash(leader.password, salt, (err, hash) => {
+        leader.password = hash;
         next();
       })
     })
@@ -60,8 +60,8 @@ VolunteerSchema.pre('save', function (next) {
 });
 
 //User Model
-var Volunteer = mongoose.model('volunteer', VolunteerSchema);
+var Leader = mongoose.model('leader', LeaderSchema);
 
 module.exports = {
-  Volunteer
+  Leader
 };
